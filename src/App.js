@@ -1,23 +1,71 @@
-import logo from './logo.svg';
 import './App.css';
-
+import { useState } from 'react';
+import axios from 'axios';
+import { useEffect } from 'react';
+import {Route,Routes,Link, useNavigate, useParams, useLocation} from 'react-router-dom'
+import Detail from './components/Detail';
 function App() {
+  const navigate = useNavigate()
+  const urlLocation = useLocation()
+  console.log('location', urlLocation)
+  let {id} = useParams();
+  console.log('id',id)
+  const url = process.env.REACT_APP_API_KEY
+  const refresh = () => {window.location.reload()}
+  const [loading,setLoading] = useState(true)
+  const [movieDay,setMovieDay] = useState('day')
+  const [movieData,setMovieData] = useState([]);
+  const [movieSearch,setMovieSearch] = useState('')
+  const [imgClick,setImgClick] = useState('')
+  const movieList =  async ()=>{await axios.get(`https://api.themoviedb.org/3/trending/movie/${movieDay}?api_key=${url}&language=ko&page=1&region=KR`)
+  .then((res)=>{setMovieData(res.data.results); setLoading(false)})}
+ useEffect(()=>{movieList()},[movieDay])
+const handleonSubmit = async (e) => {e.preventDefault(); 
+await axios.get(`https://api.themoviedb.org/3/search/movie?api_key=${url}&language=ko&page=1&region=KR&query=${movieSearch}`)
+.then((res)=>{setMovieData(res.data.results);})
+}
+window.addEventListener('scroll',function(){
+  if(window.scrollY > 10){
+    document.querySelector('nav').style.backgroundColor = '#003040';
+    document.querySelector('.logo').style.color = '#fff'
+    document.querySelector('.movieSearch').style.backgroundColor = '#fff'
+  }
+  else{document.querySelector('nav').style.backgroundColor = 'rgba(0,0,0,0)';
+   document.querySelector('.logo').style.color = '#000';
+   document.querySelector('.movieSearch').style.backgroundColor = '#000'
+  }
+})
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      
+      <nav>
+        <h2 className='logo' onClick={()=>{navigate('/'); refresh()}}>Movie App</h2>
+
+        {urlLocation.pathname == '/' ? <form onSubmit={handleonSubmit}>
+          <input type="search" onChange={(e)=>{setMovieSearch(e.target.value)}} name="movieSearch" className="movieSearch" placeholder='search...' />
+        </form> : null}
+        
+      </nav>
+
+      <Routes>
+        <Route path='/' element={loading ? <div>Loading...</div> : <ul className='movieList'>{movieData.map((a,i)=>
+        <li key={a.id}>
+          <Link to={`/detail/${i}`}>
+          <img className='listImg' onClick={()=>{setImgClick(movieData[i])}} src={`https://image.tmdb.org/t/p/w500/${movieData[i].poster_path}`}/>
+          <div className='movieDataBox'>
+          <h2>{movieData[i].title ?? movieData[i].name}</h2>
+          <p>개봉일 : {movieData[i].release_date}</p>
+          <p>평점 : {movieData[i].vote_average.toFixed(1)}</p>
+          </div>
+          </Link>
+          </li>
+          )}</ul>}></Route>
+        <Route path='/detail/:id' element={<Detail movieData={movieData} url={url}></Detail>}></Route>
+      </Routes>
+      
+      
+      
+      
     </div>
   );
 }
