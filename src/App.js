@@ -1,57 +1,38 @@
 import './App.css';
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import axios from 'axios';
-import { useEffect } from 'react';
-import {Route,Routes,Link, useNavigate, useParams, useLocation} from 'react-router-dom'
+import {Route,Routes,Link, useNavigate, useLocation} from 'react-router-dom'
 import Detail from './components/Detail';
 function App() {
   const navigate = useNavigate()
   const urlLocation = useLocation()
-  console.log('location', urlLocation)
-  let {id} = useParams();
-  console.log('id',id)
   const url = process.env.REACT_APP_API_KEY
   const refresh = () => {window.location.reload()}
   const [loading,setLoading] = useState(true)
   const [movieDay,setMovieDay] = useState('day')
   const [movieData,setMovieData] = useState([]);
   const [movieSearch,setMovieSearch] = useState('')
-  const [imgClick,setImgClick] = useState('')
   const movieList =  async ()=>{await axios.get(`https://api.themoviedb.org/3/trending/movie/${movieDay}?api_key=${url}&language=ko&page=1&region=KR`)
   .then((res)=>{setMovieData(res.data.results); setLoading(false)})}
- useEffect(()=>{movieList()},[movieDay])
-const handleonSubmit = async (e) => {e.preventDefault(); 
-await axios.get(`https://api.themoviedb.org/3/search/movie?api_key=${url}&language=ko&page=1&region=KR&query=${movieSearch}`)
-.then((res)=>{setMovieData(res.data.results);})
-}
-window.addEventListener('scroll',function(){
-  if(window.scrollY > 10){
-    document.querySelector('nav').style.backgroundColor = '#003040';
-    document.querySelector('.logo').style.color = '#fff'
-    document.querySelector('.movieSearch').style.backgroundColor = '#fff'
-  }
-  else{document.querySelector('nav').style.backgroundColor = 'rgba(0,0,0,0)';
-   document.querySelector('.logo').style.color = '#000';
-   document.querySelector('.movieSearch').style.backgroundColor = '#000'
-  }
-})
+  const handleonSubmit = async (e) => {e.preventDefault(); 
+    await axios.get(`https://api.themoviedb.org/3/search/movie?api_key=${url}&language=ko&page=1&region=KR&query=${movieSearch}`)
+    .then((res)=>{setMovieData(res.data.results);})
+    }
+ useEffect(()=>{movieList();handleonSubmit();},[movieDay])
+
   return (
     <div className="App">
-      
       <nav>
         <h2 className='logo' onClick={()=>{navigate('/'); refresh()}}>Movie App</h2>
-
         {urlLocation.pathname == '/' ? <form onSubmit={handleonSubmit}>
           <input type="search" onChange={(e)=>{setMovieSearch(e.target.value)}} name="movieSearch" className="movieSearch" placeholder='search...' />
         </form> : null}
-        
       </nav>
-
       <Routes>
         <Route path='/' element={loading ? <div>Loading...</div> : <ul className='movieList'>{movieData.map((a,i)=>
         <li key={a.id}>
           <Link to={`/detail/${i}`}>
-          <img className='listImg' onClick={()=>{setImgClick(movieData[i])}} src={`https://image.tmdb.org/t/p/w500/${movieData[i].poster_path}`}/>
+          <img className='listImg' src={`https://image.tmdb.org/t/p/w500/${movieData[i].poster_path}`}/>
           <div className='movieDataBox'>
           <h2>{movieData[i].title ?? movieData[i].name}</h2>
           <p>개봉일 : {movieData[i].release_date}</p>
@@ -60,12 +41,8 @@ window.addEventListener('scroll',function(){
           </Link>
           </li>
           )}</ul>}></Route>
-        <Route path='/detail/:id' element={<Detail movieData={movieData} url={url}></Detail>}></Route>
+        <Route path='/detail/:id' element={<Detail movieData={movieData}></Detail>}></Route>
       </Routes>
-      
-      
-      
-      
     </div>
   );
 }
