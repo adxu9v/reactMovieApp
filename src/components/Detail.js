@@ -2,6 +2,8 @@ import React from 'react'
 import { useParams } from 'react-router-dom'
 
 function Detail({movieData}){
+  window.scrollTo(0,0)
+  document.querySelector('body').style.position = 'fixed'
   let {id} = useParams()
   return (
 <div className='detailContainer'>
