@@ -1,6 +1,7 @@
 *{margin: 0; padding: 0; list-style: none; color: inherit; text-decoration: none;}
 nav{width: 100%; position: sticky; top: 0; z-index: 100; padding: 3%; background-color: #003040; display: flex; align-items: center; justify-content: space-between; height: 5vh; box-sizing: border-box; transition: 0.3s;}
 .logo{cursor: pointer; color: #000; font-size: 3vh;}
+.logo span {color: #fff;}
 .movieSearch{border: none; border-radius: 10px; padding: 2vh 3vh; background-color: #000; color: #fff;}
 .movieList{width: 100%; display: flex; flex-wrap: wrap; color: #000;}
 .movieList>li{width: 25%; padding: 30px; box-sizing: border-box;}
@@ -17,7 +18,7 @@ nav{width: 100%; position: sticky; top: 0; z-index: 100; padding: 3%; background
 .bgImg{width: 100%; height: 150%; position: fixed; bottom: 50%; transform: translateY(50%); background-repeat: no-repeat; background-position: center; background-size: cover; filter: blur(0.5vw);}
 .detailImgBox{width: 100%; height: 100%;}
 .bgImgGradient{width: 100vw; height: 100vh; position: relative; z-index: 1; background-image: linear-gradient(to right,rgba(0, 0, 0, 1) 0%,rgba(0, 0, 0, 0.5) 25%,rgba(0, 0, 0, 0.5) 50%,rgba(0, 0, 0, 0.5) 75%,rgba(0, 0, 0, 1) 100%)} 
-  /* @media screen and (min-width:1024px)  {
+  @media screen and (min-width:1024px)  {
     nav{height: 5vh;}
     .movieList>li{width: 25%; padding: 30px; box-sizing: border-box;}
     .listImg{width: 100%; height: 50vh; vertical-align: top;}
@@ -35,4 +36,4 @@ nav{width: 100%; position: sticky; top: 0; z-index: 100; padding: 3%; background
     .listImg{width: 100%; height: 80vh; vertical-align: top;}
     .detailImg{width: 30%;}
 }
-   */
+  
